@@ -62,6 +62,7 @@ public class UserService {
                     null,
                     null,
                     null,
+                    null,
                     null
             );
         }
@@ -78,6 +79,7 @@ public class UserService {
                     null,
                     null,
                     null,
+                    null,
                     null
             );
         }
@@ -91,6 +93,7 @@ public class UserService {
         return new LoginResponse(
                 "Login Successful",
                 token,
+                user.getId(),
                 user.getFullName(),
                 user.getEmail(),
                 user.getRole()

@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/cart")
@@ -17,42 +18,27 @@ public class CartController {
     private CartService cartService;
 
 
-    // =========================
-    // GET ALL CART ITEMS
-    // =========================
-
     @GetMapping
     public List<Cart> getAllCartItems() {
-
         return cartService.getAllCartItems();
     }
 
 
-    // =========================
-    // GET CART BY USER ID
-    // =========================
-
     @GetMapping("/user/{userId}")
-    public List<Cart> getUserCart(@PathVariable Long userId) {
+    public List<Cart> getUserCart(
+            @PathVariable Long userId) {
 
         return cartService.getCartByUser(userId);
     }
 
 
-    // =========================
-    // GET CART ITEM BY ID
-    // =========================
-
     @GetMapping("/{id}")
-    public Cart getCartById(@PathVariable Long id) {
+    public Optional<Cart> getCartById(
+            @PathVariable Long id) {
 
-        return cartService.getCartById(id);
+        return Optional.of(cartService.getCartById(id));
     }
 
-
-    // =========================
-    // ADD TO CART
-    // =========================
 
     @PostMapping
     public Cart addToCart(@RequestBody Cart cart) {
@@ -60,10 +46,6 @@ public class CartController {
         return cartService.addToCart(cart);
     }
 
-
-    // =========================
-    // UPDATE CART
-    // =========================
 
     @PutMapping("/{id}")
     public Cart updateCart(
@@ -73,10 +55,6 @@ public class CartController {
         return cartService.updateCart(id, cart);
     }
 
-
-    // =========================
-    // DELETE CART ITEM
-    // =========================
 
     @DeleteMapping("/{id}")
     public String deleteCart(@PathVariable Long id) {
