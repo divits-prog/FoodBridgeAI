@@ -17,50 +17,42 @@ public class CartController {
     @Autowired
     private CartService cartService;
 
-
     @GetMapping
     public List<Cart> getAllCartItems() {
         return cartService.getAllCartItems();
     }
 
-
     @GetMapping("/user/{userId}")
-    public List<Cart> getUserCart(
-            @PathVariable Long userId) {
-
+    public List<Cart> getUserCart(@PathVariable Long userId) {
         return cartService.getCartByUser(userId);
     }
 
-
     @GetMapping("/{id}")
-    public Optional<Cart> getCartById(
-            @PathVariable Long id) {
-
-        return Optional.of(cartService.getCartById(id));
+    public Optional<Cart> getCartById(@PathVariable Long id) {
+        return Optional.ofNullable(cartService.getCartById(id));
     }
-
 
     @PostMapping
     public Cart addToCart(@RequestBody Cart cart) {
-
         return cartService.addToCart(cart);
     }
-
 
     @PutMapping("/{id}")
     public Cart updateCart(
             @PathVariable Long id,
             @RequestBody Cart cart) {
-
         return cartService.updateCart(id, cart);
     }
 
-
     @DeleteMapping("/{id}")
     public String deleteCart(@PathVariable Long id) {
-
         cartService.deleteCart(id);
-
         return "Cart item deleted successfully";
+    }
+
+    @DeleteMapping("/user/{userId}")
+    public String clearUserCart(@PathVariable Long userId) {
+        cartService.clearCartByUser(userId);
+        return "User cart cleared successfully";
     }
 }

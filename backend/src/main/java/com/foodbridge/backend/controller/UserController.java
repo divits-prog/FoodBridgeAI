@@ -6,7 +6,11 @@ import com.foodbridge.backend.entity.User;
 import com.foodbridge.backend.service.UserService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/users")
@@ -21,9 +25,14 @@ public class UserController {
     // =========================
 
     @PostMapping("/register")
-    public User register(@RequestBody User user) {
-
-        return userService.register(user);
+    public ResponseEntity<?> register(@RequestBody User user) {
+        try {
+            User registered = userService.register(user);
+            return ResponseEntity.ok(registered);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Registration failed: " + e.getMessage());
+        }
     }
 
     // =========================
@@ -31,10 +40,23 @@ public class UserController {
     // =========================
 
     @PostMapping("/login")
-    public LoginResponse login(
+    public ResponseEntity<LoginResponse> login(
             @RequestBody LoginRequest loginRequest) {
 
-        return userService.login(loginRequest);
+        LoginResponse response = userService.login(loginRequest);
+        if (response.getToken() == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+        }
+        return ResponseEntity.ok(response);
+    }
+
+    // =========================
+    // GET ALL USERS (Admin)
+    // =========================
+
+    @GetMapping
+    public List<User> getAllUsers() {
+        return userService.getAllUsers();
     }
 
     // =========================
@@ -43,7 +65,6 @@ public class UserController {
 
     @GetMapping("/test")
     public String test() {
-
         return "User Controller Working";
     }
 }

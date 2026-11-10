@@ -3,7 +3,6 @@ import { Link, useNavigate } from "react-router-dom";
 import UserService from "../services/UserService";
 
 function Register() {
-
     const [user, setUser] = useState({
         fullName: "",
         email: "",
@@ -15,48 +14,105 @@ function Register() {
     const navigate = useNavigate();
 
     const handleChange = (e) => {
-
         const { name, value } = e.target;
-
         setUser({
             ...user,
             [name]: value
         });
     };
 
-
     const handleRegister = (e) => {
-
         e.preventDefault();
-
         setError("");
         setIsSubmitting(true);
+
         UserService.registerUser(user)
-            .then(() => navigate("/login"))
-            .catch(() => setError("That email may already be registered."))
+            .then(() => {
+                navigate("/login");
+            })
+            .catch((err) => {
+                const msg = err.response?.data?.message || err.response?.data || "That email may already be registered.";
+                setError(typeof msg === "string" ? msg : "Registration failed. Please try again.");
+            })
             .finally(() => setIsSubmitting(false));
     };
 
-
     return (
+        <div className="auth-modern-wrapper">
+            <div className="auth-floating-card">
+                <div className="auth-card-top">
+                    <Link className="brand-logo centered-brand" to="/">
+                        <span className="brand-icon">🍲</span>
+                        <span className="brand-title">FoodBridge</span>
+                        <span className="brand-ai-badge">AI</span>
+                    </Link>
+                    <h2>Create an Account</h2>
+                    <p>Join FoodBridge AI to explore artisanal meals and local kitchens.</p>
+                </div>
 
-        <main className="auth-page">
-            <section className="auth-panel">
-                <Link className="brand" to="/">FoodBridge<span>AI</span></Link>
-                <p className="eyebrow">JOIN THE TABLE</p>
-                <h1>Make room for better food.</h1>
-                <p className="auth-copy">Create your account and find the people putting care back into every plate.</p>
-                <form className="form-stack" onSubmit={handleRegister}>
-                    <label>Full name<input type="text" name="fullName" placeholder="Alex Morgan" value={user.fullName} onChange={handleChange} required /></label>
-                    <label>Email<input type="email" name="email" placeholder="you@example.com" value={user.email} onChange={handleChange} required /></label>
-                    <label>Password<input type="password" name="password" placeholder="At least 8 characters" value={user.password} onChange={handleChange} minLength="8" required /></label>
-                    {error && <p className="form-error">{error}</p>}
-                    <button className="primary-button" type="submit" disabled={isSubmitting}>{isSubmitting ? "Creating account..." : "Create account"}</button>
+                <form className="auth-form-fields" onSubmit={handleRegister}>
+                    <div className="input-group">
+                        <label>Full Name</label>
+                        <input
+                            type="text"
+                            name="fullName"
+                            placeholder="Alex Morgan"
+                            value={user.fullName}
+                            onChange={handleChange}
+                            required
+                        />
+                    </div>
+
+                    <div className="input-group">
+                        <label>Email Address</label>
+                        <input
+                            type="email"
+                            name="email"
+                            placeholder="you@example.com"
+                            value={user.email}
+                            onChange={handleChange}
+                            required
+                        />
+                    </div>
+
+                    <div className="input-group">
+                        <label>Password</label>
+                        <input
+                            type="password"
+                            name="password"
+                            placeholder="At least 6 characters"
+                            value={user.password}
+                            onChange={handleChange}
+                            minLength="6"
+                            required
+                        />
+                    </div>
+
+                    <div className="input-group">
+                        <label>I want to join as:</label>
+                        <select
+                            name="role"
+                            value={user.role}
+                            onChange={handleChange}
+                            className="role-selector-input"
+                        >
+                            <option value="USER">Customer (Order & Taste)</option>
+                            <option value="ADMIN">Kitchen Partner / Administrator</option>
+                        </select>
+                    </div>
+
+                    {error && <div className="error-alert-banner">{error}</div>}
+
+                    <button className="auth-submit-btn" type="submit" disabled={isSubmitting}>
+                        {isSubmitting ? "Creating account..." : "Complete Registration"}
+                    </button>
                 </form>
-                <p className="switch-auth">Already have an account? <Link to="/login">Sign in</Link></p>
-            </section>
-            <aside className="auth-aside register-aside"><span>02 / 03</span><strong>Local flavor.<br />Shared freely.</strong><p>Every order helps a neighborhood kitchen grow.</p></aside>
-        </main>
+
+                <p className="auth-footer-text">
+                    Already have an account? <Link to="/login">Sign in</Link>
+                </p>
+            </div>
+        </div>
     );
 }
 

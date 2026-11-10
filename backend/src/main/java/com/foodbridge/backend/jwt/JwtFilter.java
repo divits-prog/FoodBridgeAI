@@ -31,30 +31,23 @@ public class JwtFilter extends OncePerRequestFilter {
 
         String header = request.getHeader("Authorization");
 
-        System.out.println(
-                "Authorization Header: " + header
-        );
-
-        if (header != null &&
-                header.startsWith("Bearer ")) {
+        if (header != null && header.startsWith("Bearer ")) {
 
             String token = header.substring(7);
 
             if (jwtService.isTokenValid(token)) {
 
-                String email =
-                        jwtService.extractEmail(token);
+                String email = jwtService.extractEmail(token);
+                String role = jwtService.extractRole(token);
 
-                String role =
-                        jwtService.extractRole(token);
-
-                System.out.println(
-                        "Authenticated User: " + email
-                );
-
-                System.out.println(
-                        "Authenticated Role: " + role
-                );
+                if (role != null) {
+                    role = role.trim().toUpperCase();
+                    if (role.startsWith("ROLE_")) {
+                        role = role.substring(5);
+                    }
+                } else {
+                    role = "USER";
+                }
 
                 UsernamePasswordAuthenticationToken authentication =
                         new UsernamePasswordAuthenticationToken(
